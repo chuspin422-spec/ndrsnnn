@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi Pau </title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+        
+        body { 
+            background-color: #fffafb; 
+            font-family: 'Quicksand', sans-serif; 
+            margin: 0; padding: 20px; 
+            display: flex; flex-direction: column; align-items: center; 
+            padding-bottom: 120px;
+        }
+
+        h1 { color: #ff8fa3; text-align: center; margin-bottom: 10px; font-weight: 600; font-size: 1.8rem; }
+        .sub { color: #8a4b5d; margin-bottom: 30px; font-style: italic; text-align: center; }
+
+        .mural { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+            gap: 12px; width: 100%; max-width: 1000px; 
+        }
+
+        .card { 
+            aspect-ratio: 1/1; background: #fff; border-radius: 15px; 
+            position: relative; cursor: pointer; overflow: hidden; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06); 
+            transition: all 0.3s ease;
+            border: 2px solid #fff;
+        }
+
+        .card:hover { transform: scale(1.05); border-color: #ffb1bf; }
+
+        .card img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            position: absolute; top: 0; left: 0; z-index: 1;
+        }
+
+        .card-number { 
+            position: absolute; top: 6px; left: 6px; 
+            background: rgba(255,255,255,0.9); padding: 2px 7px; 
+            border-radius: 10px; font-size: 0.75rem; color: #ff8fa3; 
+            font-weight: bold; z-index: 2;
+        }
+
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255, 177, 191, 0.4); display: none; 
+            justify-content: center; align-items: center; z-index: 2000; 
+            backdrop-filter: blur(10px); 
+        }
+
+        .modal-content { 
+            background: white; padding: 40px 30px; border-radius: 30px; 
+            max-width: 380px; width: 85%; text-align: center; 
+            box-shadow: 0 20px 50px rgba(255, 143, 163, 0.3);
+            border: 3px solid #fff0f3;
+        }
+
+        .modal-text { font-size: 1.4rem; color: #5d4037; line-height: 1.5; margin-bottom: 20px; }
+        .btn-cerrar { background: #ff8fa3; color: white; border: none; padding: 12px 25px; border-radius: 20px; cursor: pointer; font-weight: 600; }
+
+        .music-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            background: #ff8fa3; color: white; border: none;
+            width: 60px; height: 60px; border-radius: 50%;
+            cursor: pointer; z-index: 3000; font-size: 1.5rem;
+            box-shadow: 0 6px 20px rgba(255, 143, 163, 0.4);
+            display: flex; justify-content: center; align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>100 razones para seguir intentándolo </h1>
+    <p class="sub">Para mi wina favorita, hoy y siempre.</p>
+    
+    <div class="mural" id="mural"></div>
+
+    <div class="modal" id="modal" onclick="cerrar()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <p id="m-text" class="modal-text"></p>
+            <button class="btn-cerrar" onclick="cerrar()">Cerrar</button>
+        </div>
+    </div>
+
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()"></button>
+    <audio id="miMusica" loop preload="auto">
+        <source src="https://www.chosic.com/wp-content/uploads/2021/07/Rainy-Day-Kind-of-Love.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Usamos tu hash de commit para las fotos
+        const rawBaseUrl = "https://raw.githubusercontent.com/chuspin422-spec/ndrsnnn/31a5b022245ffe383555fc98f53ac321a20ed73e/";
+
+        const razones = [
+            "Porque sigues siendo mi lugar favorito", "Porque tus abrazos son mi lugar seguro", "Porque nuestras manos aún encajan", "Porque nuestras historias no deberían terminar así", "Porque juntos somos mejores", "Porque tus ojos me dan paz", "Porque extraño reír contigo", "Porque tu voz es mi calma", "Porque sé que lo nuestro vale la pena", "Porque lo bonito no se olvida", "Porque aún nos debemos todo lo prometido", "Porque te sigo soñando", "Porque somos reales, no perfectos", "Porque aprendí mucho a tu lado", "Porque me haces sentir en casa", "Porque contigo, los días eran mejores", "Porque lo difícil también se supera", "Porque aún te amo", "Porque contigo entendí lo que es cuidar", "Porque hay cosas que solo tú entiendes de mí", "Porque no quiero alejarme", "Porque seguimos latiendo al mismo ritmo", "Porque la vida sin ti se siente incompleta", "Porque quiero sanar contigo, no sin ti", "Porque tus errores no pesan más que tus virtudes", "Porque merecemos intentarlo sin miedo", "Porque el amor también es una lucha", "Porque construimos algo que aún resiste", "Porque no te cambio por nada ni por nadie", "Porque quiero envejecer contigo", "Porque tu sonrisa es lo mejor", "Porque extraño tus manías", "Porque me haces reír", "Porque fuiste mi refugio tantas veces", "Porque nadie me conoce como tú", "Porque no quiero rendirme", "Porque sin ti nada es igual", "Porque tus silencios también me hablaban", "Porque juntos somos hogar", "Porque no todo lo que duele, debe terminar", "Porque fuiste verdad, incluso en lo roto", "Porque me sigues importando", "Porque te llegué a amar", "Porque no hay amor sin oportunidades", "Porque tú me enseñaste lo que es amar", "Porque aún tengo tanto por darte", "Porque quiero verte brillar y estar ahí", "Porque nuestras almas no se sueltan fácil", "Para que demos lo mejor de nosotros", "Porque te recuerdo día a día", "Porque cada cicatriz nuestra tiene sentido", "Porque al tocarte siento paz", "Porque amar también es elegir", "Porque hay fuego que no se apaga", "Porque lo nuestro no merece terminar así", "Porque quiero volver a construir contigo", "Porque la confianza se vuelve a recuperar", "Porque el amor puede reinventarse", "Porque nos debemos una historia feliz", "Porque sin ti mi vida no tiene sentido", "Porque contigo entendí el valor de lo simple", "Porque tus 'buenos días' eran mi sol", "Porque hay caminos que solo quiero andar contigo", "Porque eres mi persona favorita", "Porque nadie más tiene tu forma de amar", "Porque lo nuestro es raro, pero leal", "Porque tus abrazos curaban más que el tiempo", "Porque fuiste mi elección, no mi costumbre", "Porque te sigo admirando", "Porque la vida se ve más bonita contigo", "Porque aún me tiemblan las manos cuando te pienso", "Porque aún creo en 'nosotros'", "Porque contigo hasta el caos, tenía sentido", "Porque nuestras almas aún se buscan", "Porque renunciar a ti no es una opción", "Porque nadie me miró como tú", "Porque contigo la vida era canción", "Porque quiero reescribir los errores, no olvidarte", "Porque lo nuestro merece tiempo, no abandono", "Porque aún mi corazón late por ti", "Porque tú fuiste mi poesía", "Porque no quiero amar a alguien más", "Porque aún siento tu respiración en mi pecho", "Porque aún te elijo, ante todo y con todo", "Porque cada segundo contigo valió y vale la pena", "Porque lo bueno, no debe terminar mal", "Porque podemos ser mejores", "Porque la distancia nunca rompió el lazo", "Porque sé que podemos hacerlo mejor", "Porque este amor aún tiene raíces", "Porque tú eres mi hogar, incluso en el caos", "Porque cada día te extraño más", "Porque eres el amor de mi vida", 
+            "Porque quiero que demostremos que somos capaces de sanar juntos", 
+            "Porque mi futuro solo tiene sentido si estás tú", 
+            "Porque lo que construimos es demasiado valioso para dejarlo caer", 
+            "Porque hoy te elijo nuevamente con más fuerza", 
+            "Porque no paro de soñar con nuestra próxima risa", 
+            "Porque eres la razón por la que quiero ser mejor cada día", 
+            "Porque, por encima de todo, te amo profundamente" 
+        ];
+
+        const mural = document.getElementById('mural');
+
+        for(let i=1; i<=100; i++) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            const imgNum = (i % 55) || 1; 
+            const imgUrl = `${rawBaseUrl}${imgNum}.jpg`;
+
+            card.innerHTML = `
+                <div class="card-number">${i}</div>
+                <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/150/ffb1bf/ffffff?text=';">
+            `;
+
+            card.onclick = () => {
+                document.getElementById('m-text').innerText = razones[i-1];
+                document.getElementById('modal').style.display = 'flex';
+            };
+            mural.appendChild(card);
+        }
+
+        function cerrar() { document.getElementById('modal').style.display = 'none'; }
+        
+        function toggleMusic() {
+            const a = document.getElementById('miMusica');
+            const btn = document.getElementById('musicBtn');
+            if (a.paused) {
+                a.play().then(() => { btn.innerText = ""; }).catch(() => {
+                    alert("Haz clic de nuevo en  para activar el sonido");
+                });
+            } else {
+                a.pause();
+                btn.innerText = "";
+            }
+        }
+    </script>
+</body>
+</html>
